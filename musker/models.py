@@ -4,6 +4,23 @@ from django.db.models.signals import post_save
 
 #Create a user profile model
 
+# create meep model
+class Meep(models.Model):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    body = models.CharField(max_length=280)
+    created_at = models.DateTimeField(User, auto_now=True)
+
+    def __str__(self):
+        return self.body
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user": self.user.username,
+            "body": self.body,
+            "date_modified": self.created_at.strftime("%b %d %Y, %I:%M %p"), # "Feb 14 2020, 3:25 PM
+        }
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     follows = models.ManyToManyField('self', related_name='followed_by', symmetrical=False, blank=True)
