@@ -5,6 +5,19 @@ from django.db.models.signals import post_save
 #Create a user profile model
 
 # create meep model
+class MeepForm(models.Model):
+    body = models.CharField(max_length=280)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
+    
+    def __str__(self):
+        return self.body
+    
+    def serialize(self):
+        return {
+            "body": self.body,
+        }
+    
+
 class Meep(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     body = models.CharField(max_length=280)
