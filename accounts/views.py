@@ -69,4 +69,27 @@ def login_view(request):
         errors = "An error occurred"
         return JsonResponse({'msg': 'Invalid form data', 'errors': errors}, status=400)
 
+
+def update_user(request):
+    if request.method == 'PUT':
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        username = body.get('username')
+        email = body.get('email')
+        password = body.get('password')
+        user_id = body.get('user_id')
+        print(username, email, password)
+        if not all([username, email, password]):
+            return JsonResponse({'msg': 'Please fill all fields'}, status=400)
         
+        try:
+            user = User.objects.get(id=user_id)
+            user.username = username
+            user.email = email
+            user.set_password(password)
+            user.save()
+            return JsonResponse({'msg': 'User updated successfully'}, status=201)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400) 
+    else:
+        return JsonResponse({"msg": "Method not allowed"}, status=400)

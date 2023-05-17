@@ -22,6 +22,11 @@ class Meep(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     body = models.CharField(max_length=280)
     created_at = models.DateTimeField(User, auto_now=True)
+    likes = models.ManyToManyField(User, related_name='likes', blank=True)
+
+    # Keep track of likes
+    def total_likes(self):
+        return self.likes.count()
 
     def __str__(self):
         return self.body
@@ -38,6 +43,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     follows = models.ManyToManyField('self', related_name='followed_by', symmetrical=False, blank=True)
     date_modified = models.DateTimeField(User, auto_now=True)
+    profile_image = models.ImageField(upload_to='profile_images', blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -50,6 +56,7 @@ class Profile(models.Model):
             "follows": follows_list,
             "date_modified": self.date_modified.strftime("%b %d %Y, %I:%M %p"), # "Feb 14 2020, 3:25 PM
             "followed_by": list(self.followed_by.values('id', 'user__username')),
+            "profile_image": self.profile_image.url if self.profile_image else None,
 
         }
     

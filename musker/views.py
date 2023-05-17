@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from .models import Profile, Meep
 import json
@@ -63,3 +63,30 @@ def create_meep(request):
             return JsonResponse({"message": "Meep created successfully."}, status=201)
     else:
         return JsonResponse({"error": "POST request required."}, status=400)
+    
+
+def like_meep(request):
+    data = json.loads(request.body)
+    print(data)
+    user_id = data.get("user_id", "")
+    meep_id = data.get("meep_id", "")
+    meep = get_object_or_404(Meep, id=meep_id)
+   
+    if meep.likes.filter(id=user_id).exists():
+        meep.likes.remove(user_id)
+        return JsonResponse({"message": "Meep unliked successfully."}, status=201)
+
+    else:
+        meep.likes.add(user_id)
+        return JsonResponse({"message": "Meep liked successfully."}, status=201)
+
+def get_likes_count(request):
+    try:
+        data = json.loads(request.body)
+        meep_id = data.get("meep_id", "")
+        meep = get_object_or_404(Meep, id=meep_id)
+        likes_count = meep.total_likes()
+        return JsonResponse({"likes_total": likes_count}, status=201)
+    except Exception as e:
+        print(e)
+        return JsonResponse({"error": str(e)}, status=500)
