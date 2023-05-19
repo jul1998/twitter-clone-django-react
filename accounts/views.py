@@ -78,6 +78,11 @@ def update_user(request):
         email = body.get('email')
         password = body.get('password')
         user_id = body.get('user_id')
+        home_page_link = body.get('home_page')
+        facebook_link = body.get('facebook')
+        instagram_link = body.get('instagram')
+
+
         print(username, email, password)
         if not all([username, email, password]):
             return JsonResponse({'msg': 'Please fill all fields'}, status=400)
@@ -86,6 +91,9 @@ def update_user(request):
             user = User.objects.get(id=user_id)
             user.username = username
             user.email = email
+            user.homepage_link = home_page_link
+            user.facebook_link = facebook_link
+            user.instagram_link = instagram_link
             user.set_password(password)
             user.save()
             return JsonResponse({'msg': 'User updated successfully'}, status=201)

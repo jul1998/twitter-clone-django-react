@@ -44,7 +44,11 @@ class Profile(models.Model):
     follows = models.ManyToManyField('self', related_name='followed_by', symmetrical=False, blank=True)
     date_modified = models.DateTimeField(User, auto_now=True)
     profile_image = models.ImageField(upload_to='profile_images', blank=True, null=True)
-
+    profile_bio = models.CharField(max_length=280, blank=True, null=True)
+    homepage_link = models.CharField(max_length=280, blank=True, null=True)
+    facebook_link = models.CharField(max_length=280, blank=True, null=True)
+    instagram_link = models.CharField(max_length=280, blank=True, null=True)
+    
     def __str__(self):
         return self.user.username
     
